@@ -16,6 +16,11 @@ def ics_to_json():
     now = datetime.now(tz)
     end_of_day = datetime.combine(now.date(), time(23, 59, 59), tzinfo=tz)
 
+    with open('time.txt', 'w') as f:
+        f.write(now.strftime("%x") + '\n')
+        f.write(now.strftime("%X") + '\n')
+        f.write(now.strftime("%A") + '\n')
+
     events = []
     for event in c.events:
         event_start = event.begin.astimezone(tz)
