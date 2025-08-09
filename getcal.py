@@ -7,9 +7,7 @@ from zoneinfo import ZoneInfo
 ICS_URL = "https://p168-caldav.icloud.com/published/2/MjAxNzI0Mzc2ODQyMDE3Mhes2tRTG0mTstBV6AMgWn-YAorMpukIz6l1whwjzNVRIG-eunFfvfvCYV9FtcgDSQi49PbPtC88wjho0eZRaKk"
 
 def ics_to_json():
-    response = requests.get(ICS_URL)
-    response.raise_for_status()
-    c = Calendar(response.text)
+    c = Calendar(requests.get(ICS_URL).text)
 
     tz = ZoneInfo("America/Los_Angeles")
 
@@ -21,7 +19,9 @@ def ics_to_json():
         f.write(now.strftime("%X") + '\n')
         f.write(now.strftime("%A") + '\n')
 
+
     events = []
+    print(len(c.events))
     for event in c.events:
         event_start = event.begin.astimezone(tz)
         if now <= event_start <= end_of_day:
@@ -33,6 +33,9 @@ def ics_to_json():
 
     with open("calendar.json", "w") as f:
         json.dump(events, f, indent=2)
+    with open('calendar.txt', 'w') as f:
+        for event in events:
+            f.write(event["title"] + ", " + event["start"] + "," + '\n')
 
 if __name__ == "__main__":
     ics_to_json()
